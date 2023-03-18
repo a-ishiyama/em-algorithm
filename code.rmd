@@ -1,0 +1,11 @@
+```{r}
+# loading data
+load("dataex2.rdata")
+load("dataex4.rdata")
+load("dataex5.rdata")
+```
+
+```{r}
+
+```
+
