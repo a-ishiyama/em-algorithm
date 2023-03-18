@@ -1,3 +1,28 @@
+---
+title: "Incomplete Data Analysis: Assignment 2"
+author: s2445245
+date: March 20, 2023
+output:
+  pdf_document: default
+---
+\section{Question 1}
+\subsection{(1a)}
+
+
+\
+\subsection{(1b)}
+
+
+\
+\subsection{(1c)}
+
+\
+\
+\section{Question 2}
+\subsection{(2a)}
+
+\
+\subsection{(2b)}
 ```{r}
 # loading data
 load("dataex2.rdata")
@@ -5,17 +30,13 @@ load("dataex4.rdata")
 load("dataex5.rdata")
 ```
 
-
-
 ```{r}
-# Determine the maximum likelihood estimate of μ based on the data available 
-# in the file dataex2.Rdata. Consider σ2 known and equal to 1.5^2
+# Determine the maximum likelihood estimate of mu based on the data available 
+# in the file dataex2.Rdata. Consider sigma2 known and equal to 1.5^2
+set.seed(1)
 
 mean.all <- mean(dataex2$X)
 mean.obs <- mean(dataex2$X[which(dataex2$X>4)])
-
-set.seed(1)
-
 sigma2 <- 1.5
 X <- dataex2$X
 R <- dataex2$R
@@ -29,10 +50,43 @@ n.log.ll <- function(mu, sigma2, x, r) {
   -log.ll
 }
 
-
-result <- suppressWarnings(optim(mean.all, n.log.ll, 
+result.mle <- suppressWarnings(optim(mean.all, n.log.ll, 
                                  sigma2 = sigma2, x = X, r = R))
 
-result$par
+print(paste('The maximum likelihood estimate of mu based on the data is',
+            result.mle$par))
 ```
 
+\
+\section{Question 3}
+\subsection{(3a)}
+
+\
+
+\subsection{(3b)}
+
+\
+
+\subsection{(3c)}
+
+
+\
+\
+\section{Question 4}
+```{r}
+
+```
+
+\
+\
+\section{Question 5}
+\subsection{(5a)}
+```{r}
+
+```
+
+\
+\subsection{(5b)}
+```{r}
+
+```
