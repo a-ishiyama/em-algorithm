@@ -5,7 +5,34 @@ load("dataex4.rdata")
 load("dataex5.rdata")
 ```
 
-```{r}
 
+
+```{r}
+# Determine the maximum likelihood estimate of μ based on the data available 
+# in the file dataex2.Rdata. Consider σ2 known and equal to 1.5^2
+
+mean.all <- mean(dataex2$X)
+mean.obs <- mean(dataex2$X[which(dataex2$X>4)])
+
+set.seed(1)
+
+sigma2 <- 1.5
+X <- dataex2$X
+R <- dataex2$R
+
+n.log.ll <- function(mu, sigma2, x, r) {
+  log.ll <- 0
+  for (i in 1:length(x)){
+    log.ll <- log.ll +(r[i] * dnorm(x[i], mu, sqrt(sigma2)) + 
+                         (1 - r[i]) * pnorm(x[i], mu, sqrt(sigma2)))
+  }
+  -log.ll
+}
+
+
+result <- suppressWarnings(optim(mean.all, n.log.ll, 
+                                 sigma2 = sigma2, x = X, r = R))
+
+result$par
 ```
 
