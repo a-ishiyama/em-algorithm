@@ -185,18 +185,42 @@ $$\theta \pm 1.96\sqrt{\frac{p(1-p)}{n}}$$
 \section{Question 2}
 \subsection{(2a)}
 ```
+Suppose that for $Y_i\overset{\mathrm{iid}}{\sim}N(\mu,\sigma^2)$, for $i = 1,...,n$. Further suppose that the observations are censored if $Y_i<D$, for some known D and let,
+
+$$\begin{aligned}X_i &= \begin{cases} Y_i, & \text{if} \quad Y_i \ge D, \\ D, &\text{otherwise}\end{cases} \\ R_i &= \begin{cases} 1, & \text{if} \quad Y_i \ge D, \\ D, &\text{otherwise}\end{cases}\end{aligned}$$
+
+The log-likelihood of the observed data $\{(x_i,r_i)\}_{i=1}^n$ can be derived as follows;
+
+$X_i$ can take values either $Y_i$ or $D$, $X_i = Y_i$ given $Y_i\ge D$, and $X_i = D$ if $Y_i<D$. As such, the likelihood of a single observation $x_i$ can be represented in a binomial form of;
+
+$$p^{r_i}\cdot (1-p)^{1-r_i}$$ in which $p$ represent the probability that the variable has $Y_i\ge D$, and $(1-p)$ other wise.
+
+Assuming $Y_i\overset{\mathrm{iid}}{\sim}N(\mu,\sigma^2)$, the '$p$' component of the above likelihood follows the PDF of a normal distribution, $$\phi(x_i;\mu,\sigma^2)$$ as $x_i = y_i$ if $y_i \ge D$.
+
+On the other hand, the '$(1-p)$' component, which represents the cases where $y_i<D$, can be written as the CDF of a normal distribution $\Phi(y_i;\mu,\sigma^2)$. It is because it gives the probability that the variable is less than a certain threshold, in this case, D. Replacing the '$y_i$' in $\Phi(\cdot)$ as '$x_i$' gives a CDF $$\Phi(x_i;\mu,\sigma^2)$$
+
+Combining the two together , the likelihood of a single observation $x_i$ can be written as;
+
+$$L(\mu,\sigma^2|x_i,r_i) = \phi(x_i;\mu,\sigma^2)^{r_i}\cdot \Phi(x_i;\mu,\sigma^2)^{1-r_i}$$
+
+For the likelihood of all $n$ observed $x_i$, using the product rule, it can be written as;
+
+$$L(\mu,\sigma^2|\textbf x, \textbf r) = \prod_{i=1}^n \phi(x_i;\mu,\sigma^2)^{r_i}\cdot \Phi(x_i;\mu,\sigma^2)^{1-r_i}$$ The binomial component is omitted as the probability of being censored is independent for each $x_i$, and dependent on the values of $y_i$ but not $x_i$ itself.
+
+Then, taking the log of the above likelihood, it can be written as;
+
+$$log(L(\mu,\sigma^2|\textbf x, \textbf r)) = \sum_{i=1}^n r_i\cdot\phi(x_i;\mu,\sigma^2)+ (1-r_i)\cdot\Phi(x_i;\mu,\sigma^2)$$
+
 \
 
 \subsection{(2b)}
 
 ```{r}
-# loading data
+# loading data for Q2,Q4, and Q5
 load("dataex2.rdata")
 load("dataex4.rdata")
 load("dataex5.rdata")
-```
 
-```{r}
 # Determine the maximum likelihood estimate of mu based on the data available 
 # in the file dataex2.Rdata. Consider sigma2 known and equal to 1.5^2
 mean.all <- mean(dataex2$X)
@@ -227,26 +251,73 @@ print(paste('The maximum likelihood estimate of mu based on the data is',
 \section{Question 3}
 \subsection{(3a)}
 ```
+Consider a bivariate normal sample $(Y_1,Y_2)$ with parameters $\theta = (\mu_1,\mu_2,\sigma_1^2,\sigma_{12},\sigma_2^2)$. The variable $Y_1$ is fully observed, while some values of $Y_2$ are missing. Let $R$ be the missing indicator, taking the value 1 for observed values and 0 for missing values.
+
+In the case for;
+
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = \psi_0+\psi_1y_1$$ $\psi = (\psi_0,\psi_1)$distinct from $\theta$, the missing data mechanism is ignorable for likelihood-based estimation.
+
+It is because the missing data mechanism is said to follow the Missing at Random (MAR) mechanism. In the above equation, the missingness only depends on observed value $y_1$ and a set of distinct missingness parameters $\psi$, but not on missing values $y_2$ or model parameters $\theta$.
+
+Writing in mathematical form,
+
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\psi)\} \psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
+
+The missingness in the question satisfies the ignorability condition that the mechanism is MAR and the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$.
+
+Therefore, the missing data mechanism in this case is MAR and ignorable for likelihood-based estimation.
+
 \
 
 \subsection{(3b)}
+
+In the case for;
+
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = \psi_0+\psi_1y_2$$
+
+$\psi = (\psi_0,\psi_1)$distinct from $\theta$, the missing data mechanism is not ignorable for likelihood-based estimation.
+
+It is because the missing data mechanism is said to follow the Missing Not at Random (MNAR) mechanism.
+
+Contrary to Q3a, in the above equation, the missingness now depends on unobserved value $y_2$ and a set of distinct missingness parameters $\psi$. Writing in mathematical form,
+
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_2,\psi)\} \psi_0+\psi_1y_1$$ which follows the mathematical definition of MNAR,
+
+$$ f(r|\textbf y, \varphi) = f(r|y_{obs},y_{miss,}\varphi), \quad \forall \space\varphi $$
+
+Although the missingness in the question satisfies one of the ignorability condition that the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$, it violates the other criterion that the missing mechanism is MNAR, but not MCAR or MAR.
+
+Therefore, the missing data mechanism in this case is MNAR and not ignorable for likelihood-based estimation.
 
 \
 
 \subsection{(3c)}
 
+In the case for;
+
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = 0.5\cdot(\mu_1+\psi y_1)$$
+
+scalar $\psi$distinct from $\theta$, the missing data mechanism is ignorable for likelihood-based estimation under certain assumptions.
+
+It is because the missing data mechanism is said to follow the Missing at Random (MAR) mechanism.
+
+In the above equation, the missingness depends on observed value $y_1$, data model parameter $\mu_1$, and a set of distinct missingness parameters $\psi$, but not on missing values $y_2$.
+
+Writing in mathematical form,
+
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\theta,\psi)\} \psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
+
+The missingness in the question satisfies one of the ignorability condition that the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$.
+
+All of the derivation above to justify the mechanism to be MAR is conditioned on an assumption that $\mu_1$ independent from unobserved $y_2$. If this assumption is violated, the missingness will become dependent on unobserved and violates the ignorability condition that the mechanism is not either one of MAR or MCAR. It is important to check whether $\mu_1$ is independent from $y_2$, and if this is invalid, the missing mechanism follows MNAR and not ignorable for likelihood-based estimation.
+
+Therefore, under the assumption made here that $\mu_1$ is independent from $y_2$, the missing data mechanism in this case is MAR and ignorable for likelihood-based estimation.
+
 \
 \
 
 \section{Question 4}
-
 ```{r}
-# Load necessary libraries
-library(maxLik)
-
-# Load data
-load("dataex4.Rdata")
-
 X <- dataex4$X
 Y <- dataex4$Y
 
@@ -261,15 +332,12 @@ loglik_fun <- function(beta, Y, X) {
   sum(Y * log(p) + (1 - Y) * log(1 - p))
 }
 
-# Initialize the beta parameters
-beta_init <- c(0, 0)
-
 # EM algorithm
-max_iter <- 1000
-tolerance <- 1e-8
-beta <- beta_init
+tolerance <- 1e-15
+beta <- c(0, 0)
+converged <- FALSE
 
-for (iter in 1:max_iter) {
+while (converged==FALSE) {
   # E-step
   p_miss <- exp(beta[1] + X_miss * beta[2]) / (1 + exp(beta[1] + X_miss * beta[2]))
   
@@ -278,29 +346,26 @@ for (iter in 1:max_iter) {
   X_complete <- c(X_obs, X_miss)
   
   loglik_complete <- function(beta) {
-    loglik_fun(beta, Y_complete, X_complete)
+    -loglik_fun(beta, Y_complete, X_complete)
   }
   
-  result <- maxLik(loglik_complete, start=beta)
-  beta_new <- coef(result)
+  result <- optim(beta, loglik_complete)
+  beta_new <- result$par
   
   # Check convergence
-  if (sqrt(sum((beta_new - beta)^2)) < tolerance) {
+  if (sum(abs(beta_new - beta)) < tolerance) {
+    converged <- TRUE
     beta <- beta_new
-    break
+  } else {
+    beta <- beta_new
   }
-  
-  beta <- beta_new
 }
 
-# Print results
-print(beta)
-
+beta
 ```
 
 \
 \
-
 ```{=tex}
 \section{Question 5}
 \subsection{(5a)}
@@ -308,10 +373,7 @@ print(beta)
 \
 
 \subsection{(5b)}
-
 ```{r}
-library(ggplot2)
-
 Y <- dataex5
 
 # Define the density functions
@@ -324,29 +386,31 @@ fY <- function(y, mu) {
 }
 
 theta <- c(0.3, 0.3, 0.4)
-names(theta) <- c("p", "lambda", "mu")
-tolerance <- 1e-4
+tolerance <- 1e-15
+converged <- FALSE
 
-while (TRUE) {
+while (converged == FALSE) {
   # E-step
-  E_Z <- (theta["p"] * fX(Y, theta["lambda"])) / (theta["p"] * fX(Y, theta["lambda"]) + (1 - theta["p"]) * fY(Y, theta["mu"]))
+  E_Z <- (theta[1] * fX(Y, theta[2])) / (theta[1] * fX(Y, theta[2]) + (1 - theta[1]) * fY(Y, theta[3]))
   
   # M-step
   theta_new <- theta
-  theta_new["p"] <- mean(E_Z)
-  theta_new["lambda"] <- optimize(function(lambda) -sum(E_Z * (log(lambda) - (lambda + 1) * log(Y))), interval = c(0, 10))$minimum
-  theta_new["mu"] <- optimize(function(mu) -sum((1 - E_Z) * (log(mu) - (mu + 1) * log(Y))), interval = c(0, 10))$minimum
+  theta_new[1] <- mean(E_Z)
+  lambda_result <- suppressWarnings(optim(par = theta[2], fn = function(lambda) -sum(E_Z * (log(lambda) - (lambda + 1) * log(Y)))))
+  theta_new[2] <- lambda_result$par
+  mu_result <- suppressWarnings(optim(par = theta[3], fn = function(mu) -sum((1 - E_Z) * (log(mu) - (mu + 1) * log(Y)))))
+  theta_new[3] <- mu_result$par
   
   # Check convergence
   if (sum(abs(theta_new - theta)) < tolerance) {
+    converged <- TRUE
     theta <- theta_new
-    break
+  } else {
+    theta <- theta_new
   }
-  
-  theta <- theta_new
 }
 
-print(theta)
+theta
 
 hist_breaks <- function(y) {
   IQR_y <- IQR(y)
@@ -356,12 +420,12 @@ hist_breaks <- function(y) {
   return(round(breaks))
 }
 
-ggplot(data.frame(Y), aes(x = Y)) +
-  geom_histogram(aes(y = ..density..), bins = hist_breaks(Y), fill = "grey", color = "black") +
-  stat_function(fun = function(y) theta["p"] * fX(y, theta["lambda"]) + (1 - theta["p"]) * fY(y, theta["mu"]),
-                size = 1, color = "blue") +
-  xlab("Y") +
-  ylab("Density") +
-  ggtitle("Histogram with Estimated Density Superimposed")
+# Calculate density values
+Y_sorted <- sort(Y)
+density_values <- theta[1] * fX(Y_sorted, theta[2]) + (1 - theta[1]) * fY(Y_sorted, theta[3])
 
+# Plot histogram and density
+hist(Y, freq = FALSE, breaks = hist_breaks(Y), col = "grey", border = "black", xlab = "Y", ylab = "Density", main = "Histogram with Estimated Density Superimposed")
+lines(Y_sorted, density_values, col = "blue", lwd = 2)
 ```
+
