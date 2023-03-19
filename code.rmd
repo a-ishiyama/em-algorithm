@@ -361,17 +361,30 @@ while (converged==FALSE) {
   }
 }
 
-beta
+print(paste('The maximum likelihood estimate of beta0 based on the data is',
+            beta[1]))
+print(paste('The maximum likelihood estimate of beta1 based on the data is',
+            beta[2]))
 ```
 
 \
 \
-```{=tex}
 \section{Question 5}
 \subsection{(5a)}
-```
-\
+Consider a random sample $Y_1,...,Y_n$ from the mixture distribution with cumulative distribution function 
 
+$$F(y) = pF_X(y;\lambda)+(1-p)F_Y(y;\mu)$$
+where
+
+$$\begin{aligned}F_X(x;\lambda)&=1-x^{-\lambda}\\F_Y(y;\mu)&=1-y^{-\mu}\end{aligned}$$
+with $x,y \ge 1$ and $\lambda,\mu>0$.
+
+Let $\theta = (p,\lambda,\mu)$. The EM algorithm to find the updating equation for $\theta^{(t+1)}=(p^{(t+1)},\lambda^{(t+1)},\mu^{(t+1)})$ can be derived as follows;
+
+
+
+
+\
 \subsection{(5b)}
 ```{r}
 Y <- dataex5
@@ -386,7 +399,7 @@ fY <- function(y, mu) {
 }
 
 theta <- c(0.3, 0.3, 0.4)
-tolerance <- 1e-15
+tolerance <- 1e-4
 converged <- FALSE
 
 while (converged == FALSE) {
@@ -410,7 +423,12 @@ while (converged == FALSE) {
   }
 }
 
-theta
+print(paste('The maximum likelihood estimate of p based on the data is',
+            theta[1]))
+print(paste('The maximum likelihood estimate of lambda based on the data is',
+            theta[2]))
+print(paste('The maximum likelihood estimate of mu based on the data is',
+            theta[3]))
 
 hist_breaks <- function(y) {
   IQR_y <- IQR(y)
