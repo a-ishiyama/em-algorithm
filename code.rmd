@@ -224,25 +224,30 @@ load("dataex5.rdata")
 # Determine the maximum likelihood estimate of mu based on the data available 
 # in the file dataex2.Rdata. Consider sigma2 known and equal to 1.5^2
 mean.all <- mean(dataex2$X)
-mean.obs <- mean(dataex2$X[which(dataex2$X>4)])
 sigma2 <- 1.5
+
+# Data extraction
 X <- dataex2$X
 R <- dataex2$R
 
+# Define the negative log-likelihood function for the model
 n.log.ll <- function(mu, sigma2, x, r) {
   log.ll <- 0
   for (i in 1:length(x)){
+    # Update the log-likelihood value by summing over all data points
     log.ll <- log.ll - (r[i] * dnorm(x[i], mu, sqrt(sigma2)) + 
                          (1 - r[i]) * pnorm(x[i], mu, sqrt(sigma2)))
   }
   log.ll
 }
 
-result.mle <- suppressWarnings(optim(mean.all, n.log.ll, 
+# Optimize the negative log-likelihood function to find the maximum likelihood 
+# estimate of mu
+mle <- suppressWarnings(optim(mean.all, n.log.ll, 
                                  sigma2 = sigma2, x = X, r = R))
 
 print(paste('The maximum likelihood estimate of mu based on the data is',
-            result.mle$par))
+            mle$par))
 ```
 
 \
@@ -317,47 +322,50 @@ Therefore, under the assumption made here that $\mu_1$ is independent from $y_2$
 \
 
 \section{Question 4}
+
 ```{r}
-X <- dataex4$X
-Y <- dataex4$Y
+x <- dataex4$X
+y <- dataex4$Y
 
 # Extract observed and missing data
-Y_obs <- Y[!is.na(Y)]
-X_obs <- X[!is.na(Y)]
-X_miss <- X[is.na(Y)]
+y.obs <- y[!is.na(y)]
+x.obs <- x[!is.na(y)]
+x.miss <- x[is.na(y)]
 
-# Define the log-likelihood function
-loglik_fun <- function(beta, Y, X) {
-  p <- exp(beta[1] + X * beta[2]) / (1 + exp(beta[1] + X * beta[2]))
-  sum(Y * log(p) + (1 - Y) * log(1 - p))
+# Define the negative log-likelihood function
+nll.q4 <- function(beta, y, x) {
+  p <- exp(beta[1] + x * beta[2]) / (1 + exp(beta[1] + x * beta[2]))
+  -sum(y * log(p) + (1 - y) * log(1 - p))
 }
 
 # EM algorithm
-tolerance <- 1e-15
+# Initialize the parameter estimates and convergence settings
 beta <- c(0, 0)
+tolerance <- 1e-4
 converged <- FALSE
 
 while (converged==FALSE) {
-  # E-step
-  p_miss <- exp(beta[1] + X_miss * beta[2]) / (1 + exp(beta[1] + X_miss * beta[2]))
+  # E-step: estimate the missing response values based on the current beta 
+  # values
+  p.miss <- exp(beta[1] + x.miss * beta[2]) / 
+    (1 + exp(beta[1] + x.miss * beta[2]))
   
-  # M-step
-  Y_complete <- c(Y_obs, p_miss)
-  X_complete <- c(X_obs, X_miss)
+  # M-step: update the beta values using the complete data 
+  # (observed + estimated missing values)
+  y.comp <- c(y.obs, p.miss)
+  x.comp <- c(x.obs, x.miss)
   
-  loglik_complete <- function(beta) {
-    -loglik_fun(beta, Y_complete, X_complete)
-  }
+  # Optimize the negative log-likelihood function
+  mle.beta <- optim(beta, function(beta) nll.q4(beta, y.comp, x.comp))
+  beta.new <- mle.beta$par
   
-  result <- optim(beta, loglik_complete)
-  beta_new <- result$par
-  
-  # Check convergence
-  if (sum(abs(beta_new - beta)) < tolerance) {
+  # Check convergence: if the change in beta values is less than 
+  # the tolerance, break
+  if (sum(abs(beta.new - beta)) < tolerance) {
     converged <- TRUE
-    beta <- beta_new
+    beta <- beta.new
   } else {
-    beta <- beta_new
+    beta <- beta.new
   }
 }
 
@@ -369,57 +377,69 @@ print(paste('The maximum likelihood estimate of beta1 based on the data is',
 
 \
 \
+
+```{=tex}
 \section{Question 5}
 \subsection{(5a)}
-Consider a random sample $Y_1,...,Y_n$ from the mixture distribution with cumulative distribution function 
+```
+Consider a random sample $Y_1,...,Y_n$ from the mixture distribution with cumulative distribution function
 
-$$F(y) = pF_X(y;\lambda)+(1-p)F_Y(y;\mu)$$
-where
+$$F(y) = pF_X(y;\lambda)+(1-p)F_Y(y;\mu)$$ where
 
-$$\begin{aligned}F_X(x;\lambda)&=1-x^{-\lambda}\\F_Y(y;\mu)&=1-y^{-\mu}\end{aligned}$$
-with $x,y \ge 1$ and $\lambda,\mu>0$.
+$$\begin{aligned}F_X(x;\lambda)&=1-x^{-\lambda}\\F_Y(y;\mu)&=1-y^{-\mu}\end{aligned}$$ with $x,y \ge 1$ and $\lambda,\mu>0$.
 
 Let $\theta = (p,\lambda,\mu)$. The EM algorithm to find the updating equation for $\theta^{(t+1)}=(p^{(t+1)},\lambda^{(t+1)},\mu^{(t+1)})$ can be derived as follows;
 
-
-
-
 \
-\subsection{(5b)}
-```{r}
-Y <- dataex5
 
-# Define the density functions
-fX <- function(y, lambda) {
+\subsection{(5b)}
+
+```{r}
+y <- dataex5
+
+# Define the density functions for the mixture model components
+fx <- function(y, lambda) {
   lambda * y^(-lambda - 1)
 }
 
-fY <- function(y, mu) {
+fy <- function(y, mu) {
   mu * y^(-mu - 1)
 }
 
+# EM algorithm
+# Initialize the parameter estimates and convergence settings
 theta <- c(0.3, 0.3, 0.4)
 tolerance <- 1e-4
 converged <- FALSE
 
 while (converged == FALSE) {
-  # E-step
-  E_Z <- (theta[1] * fX(Y, theta[2])) / (theta[1] * fX(Y, theta[2]) + (1 - theta[1]) * fY(Y, theta[3]))
+  # E-step: Compute the posterior probability of each observation 
+  # belonging to component 1
+  e.z <- (theta[1] * fx(y, theta[2])) / 
+    (theta[1] * fx(y, theta[2]) + (1 - theta[1]) * fy(y, theta[3]))
   
-  # M-step
-  theta_new <- theta
-  theta_new[1] <- mean(E_Z)
-  lambda_result <- suppressWarnings(optim(par = theta[2], fn = function(lambda) -sum(E_Z * (log(lambda) - (lambda + 1) * log(Y)))))
-  theta_new[2] <- lambda_result$par
-  mu_result <- suppressWarnings(optim(par = theta[3], fn = function(mu) -sum((1 - E_Z) * (log(mu) - (mu + 1) * log(Y)))))
-  theta_new[3] <- mu_result$par
+  # M-step: Update the parameter estimates
+  theta.new <- theta
+  # Update the proportion of component 1
+  theta.new[1] <- mean(e.z)
+  mle.lambda <- suppressWarnings(
+    optim(theta[2], 
+          function(lambda) -sum(e.z * (log(lambda) - (lambda + 1) * log(y)))))
+  # Update lambda using the MLE
+  theta.new[2] <- mle.lambda$par
+  mle.mu <- suppressWarnings(
+    optim(theta[3], 
+          function(mu) -sum((1 - e.z) * (log(mu) - (mu + 1) * log(y)))))
+  # Update mu using the MLE
+  theta.new[3] <- mle.mu$par
   
-  # Check convergence
-  if (sum(abs(theta_new - theta)) < tolerance) {
+  # Check convergence: If the change in parameter estimates is less 
+  # than the tolerance, break
+  if (sum(abs(theta.new - theta)) < tolerance) {
     converged <- TRUE
-    theta <- theta_new
+    theta <- theta.new
   } else {
-    theta <- theta_new
+    theta <- theta.new
   }
 }
 
@@ -430,20 +450,13 @@ print(paste('The maximum likelihood estimate of lambda based on the data is',
 print(paste('The maximum likelihood estimate of mu based on the data is',
             theta[3]))
 
-hist_breaks <- function(y) {
-  IQR_y <- IQR(y)
-  n <- length(y)
-  bin_width <- 2 * IQR_y / (n^(1/3))
-  breaks <- (max(y) - min(y)) / bin_width
-  return(round(breaks))
-}
-
 # Calculate density values
-Y_sorted <- sort(Y)
-density_values <- theta[1] * fX(Y_sorted, theta[2]) + (1 - theta[1]) * fY(Y_sorted, theta[3])
+density_values <- theta[1] * fx(sort(y), theta[2]) + 
+  (1 - theta[1]) * fy(sort(y), theta[3])
 
 # Plot histogram and density
-hist(Y, freq = FALSE, breaks = hist_breaks(Y), col = "grey", border = "black", xlab = "Y", ylab = "Density", main = "Histogram with Estimated Density Superimposed")
-lines(Y_sorted, density_values, col = "blue", lwd = 2)
+hist(y, freq = FALSE, breaks = 'FD', col = "grey", border = "black", 
+     xlab = "Y", ylab = "Density", 
+     main = "Histogram with Estimated Density Superimposed")
+lines(sort(y), density_values, col = "blue", lwd = 2)
 ```
-
