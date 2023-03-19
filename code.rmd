@@ -1,28 +1,194 @@
 ---
-title: "Incomplete Data Analysis: Assignment 2"
-author: s2445245
-date: March 20, 2023
+title: 'Incomplete Data Analysis: Assignment 2'
+author: "s2445245"
+date: "March 20, 2023"
 output:
   pdf_document: default
+  html_document:
+    df_print: paged
 ---
+
+```{=tex}
 \section{Question 1}
 \subsection{(1a)}
+```
+The cumulative distributions of two independent variables X and Y are each given as;
 
+$$F_X(x;\lambda)=1-\frac{1}{x^{\lambda}}$$ and $$F_Y(y;\lambda)=1-\frac{1}{y^{\mu}}$$
+
+with $x,y\ge 1$ and $\lambda,\mu > 0$.
+
+Let $Z=min\{X,Y\}$, the density function of Z ($f_z$) can be expressed as follows;
+
+First, obtain the cumulative distribution function (CDF) of $Z$,
+
+$$Z=min\{1-\frac{1}{x^\lambda},1-\frac{1}{y^\mu}\}$$
+
+$$P(Z) = P(min\{x,y\}\le Z)$$
+
+$$P(Z) = P(x \le Z)+P(y\le Z) - P(x \le Z)\cdot P(y \le Z)$$
+
+It can be done so as X and Y are assumed to be independent.
+
+Substituting the definition of $F_X(x;\lambda)$ and $F_Y(y;\lambda)$, this CDF can be rewritten and simplified as;
+
+$$\begin{aligned}
+P(Z) &= (1-\frac{1}{Z^\lambda})+(1-\frac{1}{Z^\mu})-((1-\frac{1}{Z^\lambda})\cdot(1-\frac{1}{Z^\mu}))\\
+&= (1-\frac{1}{Z^\lambda})+(1-\frac{1}{Z^\mu})-(1-\frac{1}{Z^\lambda} - \frac{1}{Z^\mu}+\frac{1}{Z^{\mu+\lambda}})
+\\&= 1 - \frac{1}{Z^{\mu+\lambda}}
+\end{aligned}$$
+
+Then, to obtain the density function (PDF), take the first derivative of the above CDF;
+
+$$\begin{aligned}f_Z(z)\equiv \frac{\mathrm d}{\mathrm d z} &= 1 - \frac{1}{z^{\mu+\lambda}}\\&=(\mu+\lambda)\cdot z^{-(\mu+\lambda+1)}\end{aligned}$$
+
+From the above expression, it can be seen that $f_Z(z)$ follows a distribution.
+
+The censoring indicator, $\delta$, is defined as;
+
+$$\delta = \begin{cases} 1, & \text{if}\ X<Y \\ 0, &\text{otherwise}\end{cases}$$
+
+The frequency function of $\delta$ ($f_\delta$) can be expressed as follows; First, define the PDF of X and Y as;
+
+$$f_X(x) = \lambda\cdot x^{-(\lambda+1)}$$
+
+$$f_Y(y) = \mu \cdot y^{-(\mu+1)}$$
+
+They are both obtained by taking the first derivatives of $F_X(x)$ and $F_Y(y)$, their CDFs.
+
+Then, from the definition of $\delta$, it can be written that $P(\delta = 1) \equiv P(X<Y)$, which can be obtained by taking the integral of the products of the two PDFs defined above.
+
+$$P(X<Y)=\int\limits_1^\infty \int\limits_1^y f_X(x)f_Y(y) \mathrm{d}x\mathrm{d}y$$
+
+$$\begin{aligned}
+P(X<Y)&=\int\limits_1^\infty \int\limits_1^y \lambda\cdot x^{-(\lambda+1)} \cdot \mu \cdot y^{-(\mu+1)}\mathrm{d}x\mathrm{d}y \\&=\int\limits_1^\infty \mu \cdot y^{-(\mu+1)} \cdot (-y^{-\lambda}+1)\mathrm{d}y \\&= \frac{\mu}{-\lambda -\mu}+1 \\&=\frac{\lambda}{\lambda + \mu}
+\end{aligned}$$
+
+Hence,
+
+$$P(\delta=1)=\frac{\lambda}{\lambda + \mu}$$
+
+and,
+
+$$\begin{aligned}P(\delta=0)&=1-P(\delta=1)\\&=\frac{\mu}{\lambda + \mu}\end{aligned}$$
 
 \
+
 \subsection{(1b)}
 
+Let $Z_1,...,Z_n$ be random samples from $f_Z(z;\theta)$, with $\theta = \lambda+\mu$. Let $\delta_1,...,\delta_n$ be random samples from $f_{\delta}(d;p)$, with $p = \frac{\lambda}{\lambda + \mu}$
+
+The maximum likelihood estimator (MLE) of $\theta$ can be expressed as follows;
+
+Firstly, given $\theta = \lambda+\mu$, $f_z(z;\theta)$ can be written as;
+
+$$f_z(z) = \prod_{i=1}^{n}\theta z_i^{-(\theta+1)}$$
+
+Taking its log,
+
+$$log (f_z(z)) =\sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i)$$
+
+Then, take the first derivative and equate to zero to obtain the MLE,
+
+$$\begin{aligned}\frac{\mathrm d}{\mathrm d \theta} &= \sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i) \\&= \sum_{i=1}^{n}\frac{1}{\theta}-\sum_{i=1}^{n}log(z_i) \\&= \frac{n}{\theta}-\sum_{i=1}^{n}log(z_i)\end{aligned}$$
+
+Solving for 0,
+
+$$\begin{aligned}0 &= \frac{n}{\theta}-\sum_{i=1}^{n}log(z_i)\\ \frac{n}{\theta}&=\sum_{i=1}^{n}log(z_i)\end{aligned}$$
+
+Hence, the MLE of $\theta$, $\hat{\theta}$,is given as;
+
+$$\hat{\theta} = \frac{n}{\sum_{i=1}^{n}log(z_i)}$$
+
+Next, the MLE of $p$ can be expressed as follows;
+
+Firstly, given $p = \frac{\lambda}{\lambda + \mu}$, $f_{\delta}(d)$ can be expressed as;
+
+$$f_{\delta}(d) = \prod_{i=1}^{n}p^{\delta_i}\cdot (1-p)^{1-\delta_i}$$
+
+Then, taking its log,
+
+$$log (f_{\delta}(d)) = \sum_{i=1}^{n}\delta_ilog(p)+\sum_{i=1}^{n}(1-\delta_i)\cdot log(1-p)$$
+
+Taking the first derivative and equate it to zero to obtain the MLE of $p$, $\hat{p}$,
+
+$$\begin{aligned}\frac{\mathrm d}{\mathrm d p} &= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}\\ 0 &= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p} \end{aligned}$$
+
+Solving the equation,
+
+$$\begin{aligned}\frac{\sum_{i=1}^{n}\delta_i}{p}&=\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}\\ {\sum_{i=1}^{n}\delta_i}(1-p)&={\sum_{i=1}^{n}(1-\delta_i)}{p}\\ {\sum_{i=1}^{n}\delta_i}-\sum_{i-1}^n\delta_i p&= {\sum_{i=1}^{n}p - \sum_{i-1}^n\delta_i p} \\ \sum_{i=1}^{n}\delta_i &= np \end{aligned}$$
+
+Therefore, $$\hat{p}=\frac{\sum_{i=1}^{n}\delta_i}{n}$$
 
 \
+
 \subsection{(1c)}
 
-\
-\
-\section{Question 2}
-\subsection{(2a)}
+Appealing to the asymptotic normality of the maximum likelihood estimator, the 95% confidence interval for $\theta$ and for $p$ can be obtained as follows;
+
+To obtain an expression for the variance of the MLE, solve for the Fisher Information and take its inverse.
+
+The second derivative of $\theta$ can be written as,
+
+$$\frac{\mathrm d^2}{\mathrm d \theta^2} = -n\theta^{-2}$$ given that,
+
+$$\frac{\mathrm d}{\mathrm d \theta} = \frac{n}{\theta}-\sum_{i=1}^n log(z_i)$$
+
+Fisher information is obtained by taking the negative expectation of the second derivative,
+
+$$I(\theta) = -E[-n\theta^{-2}] = \frac{n}{\theta^2}$$ Taking its inverse, the variance of $\hat{\theta}_{MLE}$ is,
+
+$$I(\theta)^{-1} \equiv V(\hat{\theta}_{MLE}) = \frac{\theta^2}{n}$$
+
+Therefore, the distribution of $\hat{\theta}_{MLE}$ can be written as,
+
+$$\hat{\theta}_{MLE} \sim N(\theta, \frac{\theta^2}{n})$$
+
+and the the 95% confidence interval for $\hat{\theta}_{MLE}$ as,
+
+$$\theta \pm 1.96\sqrt{\frac{\theta^2}{n}}$$
+
+Following the same steps, the 95% confidence interval for $p$ can be obtained by;
+
+Taking the second derivative of $p$ for Fisher information,
+
+$$\frac{\mathrm d^2}{\mathrm dp^2} = \frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}$$
+
+given that,
+
+$$\frac{\mathrm d}{\mathrm d p} = \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}$$
+
+Fisher information is obtained by taking the negative expectation of the second derivative,
+
+$$\begin{aligned}I(p) &= -E[\frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}]\\ &= -E[\frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{n-\sum_{i=1}^n \delta_i}{(1-p)^2}] \end{aligned}$$
+
+Substituting an expression of
+
+$$\sum_{i=1}^{n}\delta_i = np$$ obtained from Q1b, the Fisher information can be rewritten and simplified as,
+
+$$\begin{aligned}I(p) &= -E[\frac{-np}{p^2}+\frac{n-np}{(1-p)^2}] \\&= \frac{np}{p^2}+\frac{n-np}{(1-p)^2} \\&= \frac{n}{p}+\frac{n}{1-p}\\&= \frac{n}{p(1-p)}\end{aligned}$$ Taking its inverse, the variance of $\hat{p}_{MLE}$ is,
+
+$$I(p)^{-1} \equiv V(\hat{p}_{MLE}) = \frac{p(1-p)}{n}$$
+
+Therefore, the distribution of $\hat{p}_{MLE}$ can be written as,
+
+$$\hat{p}_{MLE} \sim N(p, \frac{p(1-p)}{n})$$
+
+and the the 95% confidence interval for $\hat{p}_{MLE}$ as,
+
+$$\theta \pm 1.96\sqrt{\frac{p(1-p)}{n}}$$
 
 \
+\
+
+```{=tex}
+\section{Question 2}
+\subsection{(2a)}
+```
+\
+
 \subsection{(2b)}
+
 ```{r}
 # loading data
 load("dataex2.rdata")
@@ -33,8 +199,6 @@ load("dataex5.rdata")
 ```{r}
 # Determine the maximum likelihood estimate of mu based on the data available 
 # in the file dataex2.Rdata. Consider sigma2 known and equal to 1.5^2
-set.seed(1)
-
 mean.all <- mean(dataex2$X)
 mean.obs <- mean(dataex2$X[which(dataex2$X>4)])
 sigma2 <- 1.5
@@ -44,10 +208,10 @@ R <- dataex2$R
 n.log.ll <- function(mu, sigma2, x, r) {
   log.ll <- 0
   for (i in 1:length(x)){
-    log.ll <- log.ll +(r[i] * dnorm(x[i], mu, sqrt(sigma2)) + 
+    log.ll <- log.ll - (r[i] * dnorm(x[i], mu, sqrt(sigma2)) + 
                          (1 - r[i]) * pnorm(x[i], mu, sqrt(sigma2)))
   }
-  -log.ll
+  log.ll
 }
 
 result.mle <- suppressWarnings(optim(mean.all, n.log.ll, 
@@ -58,9 +222,11 @@ print(paste('The maximum likelihood estimate of mu based on the data is',
 ```
 
 \
+
+```{=tex}
 \section{Question 3}
 \subsection{(3a)}
-
+```
 \
 
 \subsection{(3b)}
@@ -69,24 +235,133 @@ print(paste('The maximum likelihood estimate of mu based on the data is',
 
 \subsection{(3c)}
 
+\
+\
 
-\
-\
 \section{Question 4}
+
 ```{r}
+# Load necessary libraries
+library(maxLik)
+
+# Load data
+load("dataex4.Rdata")
+
+X <- dataex4$X
+Y <- dataex4$Y
+
+# Extract observed and missing data
+Y_obs <- Y[!is.na(Y)]
+X_obs <- X[!is.na(Y)]
+X_miss <- X[is.na(Y)]
+
+# Define the log-likelihood function
+loglik_fun <- function(beta, Y, X) {
+  p <- exp(beta[1] + X * beta[2]) / (1 + exp(beta[1] + X * beta[2]))
+  sum(Y * log(p) + (1 - Y) * log(1 - p))
+}
+
+# Initialize the beta parameters
+beta_init <- c(0, 0)
+
+# EM algorithm
+max_iter <- 1000
+tolerance <- 1e-8
+beta <- beta_init
+
+for (iter in 1:max_iter) {
+  # E-step
+  p_miss <- exp(beta[1] + X_miss * beta[2]) / (1 + exp(beta[1] + X_miss * beta[2]))
+  
+  # M-step
+  Y_complete <- c(Y_obs, p_miss)
+  X_complete <- c(X_obs, X_miss)
+  
+  loglik_complete <- function(beta) {
+    loglik_fun(beta, Y_complete, X_complete)
+  }
+  
+  result <- maxLik(loglik_complete, start=beta)
+  beta_new <- coef(result)
+  
+  # Check convergence
+  if (sqrt(sum((beta_new - beta)^2)) < tolerance) {
+    beta <- beta_new
+    break
+  }
+  
+  beta <- beta_new
+}
+
+# Print results
+print(beta)
 
 ```
 
 \
 \
+
+```{=tex}
 \section{Question 5}
 \subsection{(5a)}
-```{r}
-
 ```
-
 \
+
 \subsection{(5b)}
+
 ```{r}
+library(ggplot2)
+
+Y <- dataex5
+
+# Define the density functions
+fX <- function(y, lambda) {
+  lambda * y^(-lambda - 1)
+}
+
+fY <- function(y, mu) {
+  mu * y^(-mu - 1)
+}
+
+theta <- c(0.3, 0.3, 0.4)
+names(theta) <- c("p", "lambda", "mu")
+tolerance <- 1e-4
+
+while (TRUE) {
+  # E-step
+  E_Z <- (theta["p"] * fX(Y, theta["lambda"])) / (theta["p"] * fX(Y, theta["lambda"]) + (1 - theta["p"]) * fY(Y, theta["mu"]))
+  
+  # M-step
+  theta_new <- theta
+  theta_new["p"] <- mean(E_Z)
+  theta_new["lambda"] <- optimize(function(lambda) -sum(E_Z * (log(lambda) - (lambda + 1) * log(Y))), interval = c(0, 10))$minimum
+  theta_new["mu"] <- optimize(function(mu) -sum((1 - E_Z) * (log(mu) - (mu + 1) * log(Y))), interval = c(0, 10))$minimum
+  
+  # Check convergence
+  if (sum(abs(theta_new - theta)) < tolerance) {
+    theta <- theta_new
+    break
+  }
+  
+  theta <- theta_new
+}
+
+print(theta)
+
+hist_breaks <- function(y) {
+  IQR_y <- IQR(y)
+  n <- length(y)
+  bin_width <- 2 * IQR_y / (n^(1/3))
+  breaks <- (max(y) - min(y)) / bin_width
+  return(round(breaks))
+}
+
+ggplot(data.frame(Y), aes(x = Y)) +
+  geom_histogram(aes(y = ..density..), bins = hist_breaks(Y), fill = "grey", color = "black") +
+  stat_function(fun = function(y) theta["p"] * fX(y, theta["lambda"]) + (1 - theta["p"]) * fY(y, theta["mu"]),
+                size = 1, color = "blue") +
+  xlab("Y") +
+  ylab("Density") +
+  ggtitle("Histogram with Estimated Density Superimposed")
 
 ```
