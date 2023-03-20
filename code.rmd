@@ -260,7 +260,7 @@ Consider a bivariate normal sample $(Y_1,Y_2)$ with parameters $\theta = (\mu_1,
 
 In the case for;
 
-$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = \psi_0+\psi_1y_1$$ $\psi = (\psi_0,\psi_1)$distinct from $\theta$, the missing data mechanism is ignorable for likelihood-based estimation.
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = \psi_0+\psi_1y_1$$ $\psi = (\psi_0,\psi_1)$ distinct from $\theta$, the missing data mechanism is ignorable for likelihood-based estimation.
 
 It is because the missing data mechanism is said to follow the Missing at Random (MAR) mechanism. In the above equation, the missingness only depends on observed value $y_1$ and a set of distinct missingness parameters $\psi$, but not on missing values $y_2$ or model parameters $\theta$.
 
