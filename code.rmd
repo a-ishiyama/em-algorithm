@@ -323,6 +323,61 @@ Therefore, under the assumption made here that $\mu_1$ is independent from $y_2$
 
 \section{Question 4}
 
+Suppose that
+
+$$\begin{aligned} Y_i&\overset{\mathrm{iid}}{\sim}Bernoulli\{p_i(\mathbf{\beta)}\},\\ p_i(\beta)&=\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\end{aligned}$$ for $i = 1,...,n$ and $\mathbf\beta\ =(\beta_0, \beta_1)'$.
+
+The covariate $x$ are fully observed, but the response variable $Y$ has some missing values. Assuming ignorability, the EM algorithm to compute the maximum likelihood estimate of $\mathbf\beta$ based on the data available can be derived and implemented as follows;
+
+Firstly, EM algorithm in this case is a valid approach as the missing data mechanism does not depends on the unobserved $Y_i$, hence, it is a MAR mechanism.
+
+Given that $Y_i$ follows a Bernoulli distribution (with iid), the likelihood of $p_i(\mathbf\beta)$ can be expressed as,
+
+$$\begin{aligned}L[p_i(\mathbf\beta)] &= \prod_{i=1}^n p_i(\mathbf\beta)^{Y_i} \cdot(1-p_i(\mathbf\beta))^{1-Y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i}  \end{aligned}$$ 
+Taking its log, the likelihood function of complete data can be rewritten as,
+
+$$\begin{aligned}log(L[p_i(\mathbf\beta)]) &= \sum_{i=1}^n Y_i \cdot log(p_i(\mathbf\beta)) + (1-Y_i)\cdot log(1-p_i(\mathbf\beta))\\ &= \sum_{i=1}^n Y_i \cdot log\left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right) + (1-Y_i)\cdot log\left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right) 
+\\ &= \sum_{i=1}^n Y_i \cdot (log(exp(\beta_0+\beta_1x_i))- log(1+exp(\beta_0+\beta_1x_i))) + (1-Y_i)\cdot (log(1)-log(1+exp(\beta_0+\beta_1x_i)))
+\\&= \sum_{i=1}^n Y_i \cdot (\beta_0+\beta_1x_i)-Y_i \cdot log(1+exp(\beta_0+\beta_1x_i)) - log(1+exp(\beta_0+\beta_1x_i)) + Y_i \cdot log(1+exp(\beta_0+\beta_1x_i))
+\\ & = \sum_{i=1}^n Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))
+\end{aligned}$$
+
+Assume that the first $i = 1,...,m$ values of $Y$ are observed and the remaining $i = m+1,...n$ are missing.
+
+Then, the log likelihood can be expressed as,
+
+$$log(L[p_i(\mathbf\beta)]) = \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))$$
+
+At iteration $(t+1)$ of the algorithm, the E-step calculates the conditional expectation, with respect to the missing observations, of the complete data log-likelihood given the observed data and the estimate of $\mathbf\beta$ from iteration $t$, $\mathbf\beta^t$,
+
+$$Q(\mathbf\beta|\mathbf\beta^t) = E_{Y_{miss}}[log (L[p_i(\mathbf\beta)|\mathbf y_{obs},\mathbf y_{miss}])|\mathbf y_{obs},\mathbf\beta^t]$$
+
+In this case, conditional expectation becomes,
+
+$$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= E_{Y_{miss}}[\sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))] 
+\\ & = \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n E_{Y_{miss}}[Y_i \cdot (\beta_0+\beta_1x_i)] - log(1+exp(\beta_0+\beta_1x_i))
+\\ &= \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n E_{Y_{miss}}[Y_i \cdot (\beta_0+\beta_1x_i)] -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
+\end{aligned}$$
+
+Given that for a random variable $X$ which follows a Bernoulli distribution,
+
+$$P(X = x) = p^x\cdot (1-p)^{1-x}$$
+The expectation is,
+$$E[X] = p$$
+
+The above conditional expectation can be completed as,
+
+$$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n E_{Y_{miss}}[Y_i] \cdot (\beta_0+\beta_1x_i) -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
+\\&= \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n \left(\frac{exp(\beta_0^t+\beta_1^tx_i)}{1+exp(\beta^t_0+\beta^t_1x_i)}\right)\cdot (\beta_0+\beta_1x_i) -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
+\end{aligned}$$
+
+Following the derivation of the E-step as above, the M-step can be computed as,
+
+$$\mathbf\beta^{t+1} = argmax_{\mathbf\beta} \space\space Q(\mathbf\beta|\mathbf\beta^t)$$
+
+The maximisation of the likelihood function is run with respect to $\mathbf\beta$, and continued to until some convergence is reached.
+
+The following R codes computes the maximum likelihood estimate of $\mathbf\beta$ based on the data available
 ```{r}
 x <- dataex4$X
 y <- dataex4$Y
@@ -347,12 +402,12 @@ converged <- FALSE
 while (converged==FALSE) {
   # E-step: estimate the missing response values based on the current beta 
   # values
-  p.miss <- exp(beta[1] + x.miss * beta[2]) / 
+  miss <- exp(beta[1] + x.miss * beta[2]) / 
     (1 + exp(beta[1] + x.miss * beta[2]))
   
   # M-step: update the beta values using the complete data 
   # (observed + estimated missing values)
-  y.comp <- c(y.obs, p.miss)
+  y.comp <- c(y.obs, miss)
   x.comp <- c(x.obs, x.miss)
   
   # Optimize the negative log-likelihood function
@@ -450,13 +505,13 @@ print(paste('The maximum likelihood estimate of lambda based on the data is',
 print(paste('The maximum likelihood estimate of mu based on the data is',
             theta[3]))
 
-# Calculate density values
-density_values <- theta[1] * fx(sort(y), theta[2]) + 
+# Calculate density
+density <- theta[1] * fx(sort(y), theta[2]) + 
   (1 - theta[1]) * fy(sort(y), theta[3])
 
 # Plot histogram and density
 hist(y, freq = FALSE, breaks = 'FD', col = "grey", border = "black", 
-     xlab = "Y", ylab = "Density", 
-     main = "Histogram with Estimated Density Superimposed")
-lines(sort(y), density_values, col = "blue", lwd = 2)
+     xlab = "Y", ylab = "Density", xlim = c(1,8),
+     main = "Histogram of Y with Estimated Density Superimposed")
+lines(sort(y), density, col = "blue", lwd = 2)
 ```
