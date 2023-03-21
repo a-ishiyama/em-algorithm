@@ -40,7 +40,7 @@ P(Z) &= (1-\frac{1}{Z^\lambda})+(1-\frac{1}{Z^\mu})-((1-\frac{1}{Z^\lambda})\cdo
 
 Then, to obtain the density function (PDF), take the first derivative of the above CDF;
 
-$$\begin{aligned}f_Z(z)\equiv \frac{\mathrm d}{\mathrm d z} &= 1 - \frac{1}{z^{\mu+\lambda}}\\&=(\mu+\lambda)\cdot z^{-(\mu+\lambda+1)}\end{aligned}$$
+$$\begin{aligned}f_Z(z)\equiv \frac{\mathrm d}{\mathrm d z}P(Z) &=(\mu+\lambda)\cdot z^{-(\mu+\lambda+1)}\end{aligned}$$
 
 From the above expression, it can be seen that $f_Z(z)$ follows a distribution.
 
@@ -80,17 +80,17 @@ Let $Z_1,...,Z_n$ be random samples from $f_Z(z;\theta)$, with $\theta = \lambda
 
 The maximum likelihood estimator (MLE) of $\theta$ can be expressed as follows;
 
-Firstly, given $\theta = \lambda+\mu$, $f_z(z;\theta)$ can be written as;
+Firstly, given $\theta = \lambda+\mu$, $f_Z(z;\theta)$ can be written as;
 
-$$f_z(z) = \prod_{i=1}^{n}\theta z_i^{-(\theta+1)}$$
+$$f_Z(z) = \prod_{i=1}^{n}\theta z_i^{-(\theta+1)}$$
 
 Taking its log,
 
-$$log (f_z(z)) =\sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i)$$
+$$log (f_Z(z)) =\sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i)$$
 
 Then, take the first derivative and equate to zero to obtain the MLE,
 
-$$\begin{aligned}\frac{\mathrm d}{\mathrm d \theta} &= \sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i) \\&= \sum_{i=1}^{n}\frac{1}{\theta}-\sum_{i=1}^{n}log(z_i) \\&= \frac{n}{\theta}-\sum_{i=1}^{n}log(z_i)\end{aligned}$$
+$$\begin{aligned}\frac{\mathrm d}{\mathrm d \theta}log (f_Z(z))&= \sum_{i=1}^{n}\frac{1}{\theta}-\sum_{i=1}^{n}log(z_i) \\&= \frac{n}{\theta}-\sum_{i=1}^{n}log(z_i)\end{aligned}$$
 
 Solving for 0,
 
@@ -112,7 +112,7 @@ $$log (f_{\delta}(d)) = \sum_{i=1}^{n}\delta_ilog(p)+\sum_{i=1}^{n}(1-\delta_i)\
 
 Taking the first derivative and equate it to zero to obtain the MLE of $p$, $\hat{p}$,
 
-$$\begin{aligned}\frac{\mathrm d}{\mathrm d p} &= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}\\ 0 &= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p} \end{aligned}$$
+$$\begin{aligned}\frac{\mathrm d}{\mathrm d p} log (f_{\delta}(d))&= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p} = 0 \end{aligned}$$
 
 Solving the equation,
 
@@ -130,9 +130,9 @@ To obtain an expression for the variance of the MLE, solve for the Fisher Inform
 
 The second derivative of $\theta$ can be written as,
 
-$$\frac{\mathrm d^2}{\mathrm d \theta^2} = -n\theta^{-2}$$ given that,
+$$\frac{\mathrm d^2}{\mathrm d \theta^2} log (f_Z(z))= -n\theta^{-2}$$ given that,
 
-$$\frac{\mathrm d}{\mathrm d \theta} = \frac{n}{\theta}-\sum_{i=1}^n log(z_i)$$
+$$\frac{\mathrm d}{\mathrm d \theta}log (f_Z(z)) = \frac{n}{\theta}-\sum_{i=1}^n log(z_i)$$
 
 Fisher information is obtained by taking the negative expectation of the second derivative,
 
@@ -152,11 +152,11 @@ Following the same steps, the 95% confidence interval for $p$ can be obtained by
 
 Taking the second derivative of $p$ for Fisher information,
 
-$$\frac{\mathrm d^2}{\mathrm dp^2} = \frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}$$
+$$\frac{\mathrm d^2}{\mathrm dp^2}log (f_{\delta}(d)) = \frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}$$
 
 given that,
 
-$$\frac{\mathrm d}{\mathrm d p} = \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}$$
+$$\frac{\mathrm d}{\mathrm d p} log (f_{\delta}(d))= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}$$
 
 Fisher information is obtained by taking the negative expectation of the second derivative,
 
@@ -266,7 +266,7 @@ It is because the missing data mechanism is said to follow the Missing at Random
 
 Writing in mathematical form,
 
-$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\psi)\} \psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\psi)\} =\psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
 
 The missingness in the question satisfies the ignorability condition that the mechanism is MAR and the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$.
 
@@ -286,7 +286,7 @@ It is because the missing data mechanism is said to follow the Missing Not at Ra
 
 Contrary to Q3a, in the above equation, the missingness now depends on unobserved value $y_2$ and a set of distinct missingness parameters $\psi$. Writing in mathematical form,
 
-$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_2,\psi)\} \psi_0+\psi_1y_1$$ which follows the mathematical definition of MNAR,
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_2,\psi)\} =\psi_0+\psi_1y_1$$ which follows the mathematical definition of MNAR,
 
 $$ f(r|\textbf y, \varphi) = f(r|y_{obs},y_{miss,}\varphi), \quad \forall \space\varphi $$
 
@@ -310,7 +310,7 @@ In the above equation, the missingness depends on observed value $y_1$, data mod
 
 Writing in mathematical form,
 
-$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\theta,\psi)\} \psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\theta,\psi)\} =\psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
 
 The missingness in the question satisfies one of the ignorability condition that the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$.
 
@@ -331,10 +331,9 @@ The covariate $x$ are fully observed, but the response variable $Y$ has some mis
 
 Firstly, EM algorithm in this case is a valid approach as the missing data mechanism does not depends on the unobserved $Y_i$, hence, it is a MAR mechanism.
 
-Given that $Y_i$ follows a Bernoulli distribution (with iid), the likelihood of $p_i(\mathbf\beta)$ can be expressed as,
+Given that $Y_i$ follows a Bernoulli distribution (with iid), the likelihood of $p_i(\mathbf{\beta})$ can be expressed as,
 
-$$\begin{aligned}L[p_i(\mathbf\beta)] &= \prod_{i=1}^n p_i(\mathbf\beta)^{Y_i} \cdot(1-p_i(\mathbf\beta))^{1-Y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i}  \end{aligned}$$ 
-Taking its log, the likelihood function of complete data can be rewritten as,
+$$\begin{aligned}L[p_i(\mathbf\beta)] &= \prod_{i=1}^n p_i(\mathbf\beta)^{Y_i} \cdot(1-p_i(\mathbf\beta))^{1-Y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i}  \end{aligned}$$ Taking its log, the likelihood function of complete data can be rewritten as,
 
 $$\begin{aligned}log(L[p_i(\mathbf\beta)]) &= \sum_{i=1}^n Y_i \cdot log(p_i(\mathbf\beta)) + (1-Y_i)\cdot log(1-p_i(\mathbf\beta))\\ &= \sum_{i=1}^n Y_i \cdot log\left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right) + (1-Y_i)\cdot log\left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right) 
 \\ &= \sum_{i=1}^n Y_i \cdot (log(exp(\beta_0+\beta_1x_i))- log(1+exp(\beta_0+\beta_1x_i))) + (1-Y_i)\cdot (log(1)-log(1+exp(\beta_0+\beta_1x_i)))
@@ -361,9 +360,7 @@ $$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= E_{Y_{miss}}[\sum_{i=1}^m Y_i
 
 Given that for a random variable $X$ which follows a Bernoulli distribution,
 
-$$P(X = x) = p^x\cdot (1-p)^{1-x}$$
-The expectation is,
-$$E[X] = p$$
+$$P(X = x) = p^x\cdot (1-p)^{1-x}$$ The expectation is, $$E[X] = p$$
 
 The above conditional expectation can be completed as,
 
@@ -375,9 +372,10 @@ Following the derivation of the E-step as above, the M-step can be computed as,
 
 $$\mathbf\beta^{t+1} = argmax_{\mathbf\beta} \space\space Q(\mathbf\beta|\mathbf\beta^t)$$
 
-The maximisation of the likelihood function is run with respect to $\mathbf\beta$, and continued to until some convergence is reached.
+The maximisation of the likelihood function is run with respect to $\mathbf\beta$, and continued until some convergence is reached.
 
 The following R codes computes the maximum likelihood estimate of $\mathbf\beta$ based on the data available
+
 ```{r}
 x <- dataex4$X
 y <- dataex4$Y
@@ -445,6 +443,56 @@ $$\begin{aligned}F_X(x;\lambda)&=1-x^{-\lambda}\\F_Y(y;\mu)&=1-y^{-\mu}\end{alig
 
 Let $\theta = (p,\lambda,\mu)$. The EM algorithm to find the updating equation for $\theta^{(t+1)}=(p^{(t+1)},\lambda^{(t+1)},\mu^{(t+1)})$ can be derived as follows;
 
+Firstly, the densities of $F_X(x;\lambda)$ and $F_Y(y;\mu)$ can be written as,
+
+$$\begin{aligned}f_X&=\lambda y^{-(\lambda+1)}\\f_Y&=\mu y^{-(\mu+1)}\end{aligned}$$
+
+Then, the likelihood of $f(y)$ can be written as,
+
+$$f(y) = p\cdot (\lambda y^{-(\lambda+1)}) + (1-p)\cdot (\mu y^{-(\mu+1)})$$
+
+Let $z_i$ be binary latent variables such that,
+
+$$z_i = \begin{cases} 1, & \text{if} \space \space y_i \space\space \text{belongs to the first component}, \\ 0, &\text{if} \space \space y_i \space\space \text{belongs to the second component}\end{cases}$$
+
+The observed data in this context is $\textbf{y} = (y_1,...,y_n)$ and the missing data is $\textbf{z} = (z_1,...,z_n)$.
+
+The likelihood of the complete data $(\textbf{y,z})$ is,
+
+$$L(\theta; \textbf{y,z}) = \prod_{i=1}^n p\cdot(\lambda y^{-(\lambda+1)})^{z_i}+(1-p)\cdot(\mu y^{-(\mu+1)})^{1-z_i}$$ And taking its log, the log likelihood becomes,
+
+$$log(L(\theta; \textbf{y,z})) = \sum_{i=1}^n z_i\cdot(log(p)+log(\lambda y^{-(\lambda+1)}))+(1-z_i)\cdot(log(1-p)+log(\mu y^{-(\mu+1)}))$$
+
+For the E-step, the expectation is formulated as,
+
+$$\begin{aligned}Q(\theta|\theta^t) &= E_z[log(L(\theta;\textbf{y,z}))|\textbf{y},\theta^t] \\ & = \sum_{i=1}^n E[Z_i|y_i,\theta^t]\cdot(log(p)+log(\lambda y^{-(\lambda+1)})) + (1-E[Z_i|y_i,\theta^t])\cdot(log(1-p)+log(\mu y^{-(\mu+1)}))\end{aligned}$$
+
+Given that $E[Z_i|y_i,\theta^t]=Pr(Z_i=1|y_i,\theta^t)$, applying Bayesian theorem and the law of total probability,
+
+$$\begin{aligned}E[Z_i|y_i,\theta^t]&=Pr(Z_i=1|y_i,\theta^t) 
+\\ &= \frac{p^t\cdot(\lambda^t y^{-(\lambda^t+1)})}{p^t\cdot(\lambda^t y^{-(\lambda^t+1)})+(1-p^t)\cdot(\mu^t y^{-(\mu^t+1)})}\\
+\\&=\tilde{p}_i^t, \quad \quad \quad \quad i = 1,...,n\end{aligned}$$
+
+As such,
+
+$$Q(\theta|\theta^t)=\sum_{i=1}^n \tilde{p}_i^t\cdot(log(p)+log(\lambda y^{-(\lambda+1)})) + (1-\tilde{p}_i^t)\cdot(log(1-p)+log(\mu y^{-(\mu+1)}))$$
+
+For the M-step, compute the partial derivatives of $Q(\theta|\theta^t)$ with respect to all three components of $\theta=(p,\lambda,\mu)$.
+
+$$\begin{aligned} \frac{\mathrm d}{\mathrm d p}Q(\theta|\theta^t) &= 0 \Longrightarrow p^{t+1}=\frac{1}{n}\sum_{i=1}^n \tilde{p}_i^t,
+\\ \frac{\mathrm d}{\mathrm d \lambda}Q(\theta|\theta^t) &= 0 \Longrightarrow \lambda^{t+1} = argmax_{\mathbf\lambda}\sum_{i=1}^n \tilde{p}_i^t\cdot log(\lambda y^{-(\lambda+1)})
+\\ \frac{\mathrm d}{\mathrm d \mu}Q(\theta|\theta^t) &= 0 \Longrightarrow \mu^{t+1} = argmax_{\mathbf\mu}\sum_{i=1}^n (1-\tilde{p}_i^t)\cdot(log(\mu y^{-(\mu+1)})
+\end{aligned}$$
+
+The latter two becomes,
+
+$$\begin{aligned} \lambda^{t+1} &= argmax_{\mathbf\lambda}\sum_{i=1}^n \tilde{p}_i^t\cdot log(\lambda y^{-(\lambda+1)})
+\\ &= argmax_{\mathbf\lambda}\sum_{i=1}^n \tilde{p}_i^t\cdot (log(\lambda)-(\lambda+1)+log(y))
+\\ \mu^{t+1} &= argmax_{\mathbf\mu}\sum_{i=1}^n (1-\tilde{p}_i^t)\cdot log(\mu y^{-(\mu+1)})
+\\ &= argmax_{\mathbf\mu}\sum_{i=1}^n (1-\tilde{p}_i^t)\cdot (log(\mu)-(\mu+1)+log(y))
+\end{aligned}$$
+and continued until some convergence is reached.
+
 \
 
 \subsection{(5b)}
@@ -470,21 +518,21 @@ converged <- FALSE
 while (converged == FALSE) {
   # E-step: Compute the posterior probability of each observation 
   # belonging to component 1
-  e.z <- (theta[1] * fx(y, theta[2])) / 
+  p <- (theta[1] * fx(y, theta[2])) / 
     (theta[1] * fx(y, theta[2]) + (1 - theta[1]) * fy(y, theta[3]))
   
   # M-step: Update the parameter estimates
   theta.new <- theta
   # Update the proportion of component 1
-  theta.new[1] <- mean(e.z)
+  theta.new[1] <- mean(p)
   mle.lambda <- suppressWarnings(
     optim(theta[2], 
-          function(lambda) -sum(e.z * (log(lambda) - (lambda + 1) * log(y)))))
+          function(lambda) -sum(p * (log(lambda) - (lambda + 1) * log(y)))))
   # Update lambda using the MLE
   theta.new[2] <- mle.lambda$par
   mle.mu <- suppressWarnings(
     optim(theta[3], 
-          function(mu) -sum((1 - e.z) * (log(mu) - (mu + 1) * log(y)))))
+          function(mu) -sum((1 - p) * (log(mu) - (mu + 1) * log(y)))))
   # Update mu using the MLE
   theta.new[3] <- mle.mu$par
   
@@ -510,8 +558,8 @@ density <- theta[1] * fx(sort(y), theta[2]) +
   (1 - theta[1]) * fy(sort(y), theta[3])
 
 # Plot histogram and density
-hist(y, freq = FALSE, breaks = 'FD', col = "grey", border = "black", 
+hist(y, freq = FALSE, breaks = 'FD', border = "black", 
      xlab = "Y", ylab = "Density", xlim = c(1,8),
      main = "Histogram of Y with Estimated Density Superimposed")
-lines(sort(y), density, col = "blue", lwd = 2)
+lines(sort(y), density, col = "red", lwd = 2)
 ```
