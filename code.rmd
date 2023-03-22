@@ -33,16 +33,16 @@ It can be done so as X and Y are assumed to be independent.
 Substituting the definition of $F_X(x;\lambda)$ and $F_Y(y;\lambda)$, this CDF can be rewritten and simplified as;
 
 $$\begin{aligned}
-P(Z) &= (1-\frac{1}{Z^\lambda})+(1-\frac{1}{Z^\mu})-((1-\frac{1}{Z^\lambda})\cdot(1-\frac{1}{Z^\mu}))\\
-&= (1-\frac{1}{Z^\lambda})+(1-\frac{1}{Z^\mu})-(1-\frac{1}{Z^\lambda} - \frac{1}{Z^\mu}+\frac{1}{Z^{\mu+\lambda}})
-\\&= 1 - \frac{1}{Z^{\mu+\lambda}}
+P(Z) &= (1-\frac{1}{z^\lambda})+(1-\frac{1}{z^\mu})-((1-\frac{1}{z^\lambda})\cdot(1-\frac{1}{z^\mu}))\\
+&= (1-\frac{1}{z^\lambda})+(1-\frac{1}{z^\mu})-(1-\frac{1}{z^\lambda} - \frac{1}{z^\mu}+\frac{1}{z^{\mu+\lambda}})
+\\&= 1 - \frac{1}{z^{\mu+\lambda}}
 \end{aligned}$$
 
 Then, to obtain the density function (PDF), take the first derivative of the above CDF;
 
 $$\begin{aligned}f_Z(z)\equiv \frac{\mathrm d}{\mathrm d z}P(Z) &=(\mu+\lambda)\cdot z^{-(\mu+\lambda+1)}\end{aligned}$$
 
-From the above expression, it can be seen that $f_Z(z)$ follows a distribution.
+From the above expression, it can be seen that $Z$ follows a Pareto distribution. The scale parameter is 1 and the shape parameter is $\lambda+\mu$.
 
 The censoring indicator, $\delta$, is defined as;
 
@@ -72,6 +72,8 @@ and,
 
 $$\begin{aligned}P(\delta=0)&=1-P(\delta=1)\\&=\frac{\mu}{\lambda + \mu}\end{aligned}$$
 
+From the above expression, it can be seen that $\delta$ follows a Bernoulli distribution.
+
 \
 
 \subsection{(1b)}
@@ -80,17 +82,17 @@ Let $Z_1,...,Z_n$ be random samples from $f_Z(z;\theta)$, with $\theta = \lambda
 
 The maximum likelihood estimator (MLE) of $\theta$ can be expressed as follows;
 
-Firstly, given $\theta = \lambda+\mu$, $f_Z(z;\theta)$ can be written as;
+Firstly, given $\theta = \lambda+\mu$, $L(\theta)$ can be written as;
 
-$$f_Z(z) = \prod_{i=1}^{n}\theta z_i^{-(\theta+1)}$$
+$$L(\theta) = \prod_{i=1}^{n}\theta z_i^{-(\theta+1)}$$
 
 Taking its log,
 
-$$log (f_Z(z)) =\sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i)$$
+$$log (L(\theta)) =\sum_{i=1}^{n}log(\theta)-\sum_{i=1}^{n}(\theta +1)\cdot log(z_i)$$
 
 Then, take the first derivative and equate to zero to obtain the MLE,
 
-$$\begin{aligned}\frac{\mathrm d}{\mathrm d \theta}log (f_Z(z))&= \sum_{i=1}^{n}\frac{1}{\theta}-\sum_{i=1}^{n}log(z_i) \\&= \frac{n}{\theta}-\sum_{i=1}^{n}log(z_i)\end{aligned}$$
+$$\begin{aligned}\frac{\mathrm d}{\mathrm d \theta}log (L(\theta))&= \sum_{i=1}^{n}\frac{1}{\theta}-\sum_{i=1}^{n}log(z_i) \\&= \frac{n}{\theta}-\sum_{i=1}^{n}log(z_i)\end{aligned}$$
 
 Solving for 0,
 
@@ -102,17 +104,17 @@ $$\hat{\theta} = \frac{n}{\sum_{i=1}^{n}log(z_i)}$$
 
 Next, the MLE of $p$ can be expressed as follows;
 
-Firstly, given $p = \frac{\lambda}{\lambda + \mu}$, $f_{\delta}(d)$ can be expressed as;
+Firstly, given $p = \frac{\lambda}{\lambda + \mu}$, $L(p)$ can be expressed as;
 
-$$f_{\delta}(d) = \prod_{i=1}^{n}p^{\delta_i}\cdot (1-p)^{1-\delta_i}$$
+$$L(p) = \prod_{i=1}^{n}p^{\delta_i}\cdot (1-p)^{1-\delta_i}$$
 
 Then, taking its log,
 
-$$log (f_{\delta}(d)) = \sum_{i=1}^{n}\delta_ilog(p)+\sum_{i=1}^{n}(1-\delta_i)\cdot log(1-p)$$
+$$log (L(p)) = \sum_{i=1}^{n}\delta_ilog(p)+\sum_{i=1}^{n}(1-\delta_i)\cdot log(1-p)$$
 
 Taking the first derivative and equate it to zero to obtain the MLE of $p$, $\hat{p}$,
 
-$$\begin{aligned}\frac{\mathrm d}{\mathrm d p} log (f_{\delta}(d))&= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p} = 0 \end{aligned}$$
+$$\begin{aligned}\frac{\mathrm d}{\mathrm d p} log (L(p))&= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p} = 0 \end{aligned}$$
 
 Solving the equation,
 
@@ -130,9 +132,9 @@ To obtain an expression for the variance of the MLE, solve for the Fisher Inform
 
 The second derivative of $\theta$ can be written as,
 
-$$\frac{\mathrm d^2}{\mathrm d \theta^2} log (f_Z(z))= -n\theta^{-2}$$ given that,
+$$\frac{\mathrm d^2}{\mathrm d \theta^2} log (L(\theta))= -n\theta^{-2}$$ given that,
 
-$$\frac{\mathrm d}{\mathrm d \theta}log (f_Z(z)) = \frac{n}{\theta}-\sum_{i=1}^n log(z_i)$$
+$$\frac{\mathrm d}{\mathrm d \theta}log (L(\theta)) = \frac{n}{\theta}-\sum_{i=1}^n log(z_i)$$
 
 Fisher information is obtained by taking the negative expectation of the second derivative,
 
@@ -152,21 +154,21 @@ Following the same steps, the 95% confidence interval for $p$ can be obtained by
 
 Taking the second derivative of $p$ for Fisher information,
 
-$$\frac{\mathrm d^2}{\mathrm dp^2}log (f_{\delta}(d)) = \frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}$$
+$$\frac{\mathrm d^2}{\mathrm dp^2}log (L(p)) = \frac{-\sum_{i=1}^n \delta_i}{p^2}-\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}$$
 
 given that,
 
-$$\frac{\mathrm d}{\mathrm d p} log (f_{\delta}(d))= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}$$
+$$\frac{\mathrm d}{\mathrm d p} log (L(p))= \frac{\sum_{i=1}^{n}\delta_i}{p}-\frac{\sum_{i=1}^{n}(1-\delta_i)}{1-p}$$
 
 Fisher information is obtained by taking the negative expectation of the second derivative,
 
-$$\begin{aligned}I(p) &= -E[\frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}]\\ &= -E[\frac{-\sum_{i=1}^n \delta_i}{p^2}+\frac{n-\sum_{i=1}^n \delta_i}{(1-p)^2}] \end{aligned}$$
+$$\begin{aligned}I(p) &= -E[\frac{-\sum_{i=1}^n \delta_i}{p^2}-\frac{\sum_{i=1}^n (1-\delta_i)}{(1-p)^2}]\\ &= -E[\frac{-\sum_{i=1}^n \delta_i}{p^2}-\frac{n-\sum_{i=1}^n \delta_i}{(1-p)^2}] \end{aligned}$$
 
 Substituting an expression of
 
 $$\sum_{i=1}^{n}\delta_i = np$$ obtained from Q1b, the Fisher information can be rewritten and simplified as,
 
-$$\begin{aligned}I(p) &= -E[\frac{-np}{p^2}+\frac{n-np}{(1-p)^2}] \\&= \frac{np}{p^2}+\frac{n-np}{(1-p)^2} \\&= \frac{n}{p}+\frac{n}{1-p}\\&= \frac{n}{p(1-p)}\end{aligned}$$ Taking its inverse, the variance of $\hat{p}_{MLE}$ is,
+$$\begin{aligned}I(p) &= -E[\frac{-np}{p^2}-\frac{n-np}{(1-p)^2}] \\&= \frac{np}{p^2}+\frac{n-np}{(1-p)^2} \\&= \frac{n}{p}+\frac{n}{1-p}\\&= \frac{n}{p(1-p)}\end{aligned}$$ Taking its inverse, the variance of $\hat{p}_{MLE}$ is,
 
 $$I(p)^{-1} \equiv V(\hat{p}_{MLE}) = \frac{p(1-p)}{n}$$
 
@@ -314,7 +316,7 @@ $$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\theta,\psi)\} =0.5\c
 
 The missingness in the question satisfies one of the ignorability condition that the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$.
 
-All of the derivation above to justify the mechanism to be MAR is conditioned on an assumption that $\mu_1$ independent from unobserved $y_2$. If this assumption is violated, the missingness will become dependent on unobserved and violates the ignorability condition that the mechanism is not either one of MAR or MCAR. It is important to check whether $\mu_1$ is independent from $y_2$, and if this is invalid, the missing mechanism follows MNAR and not ignorable for likelihood-based estimation. In this case, it is a valid assumption as $\mu_1$ is held to be constant. 
+All of the derivation above to justify the mechanism to be MAR is conditioned on an assumption that $\mu_1$ independent from unobserved $y_2$. If this assumption is violated, the missingness will become dependent on unobserved and violates the ignorability condition that the mechanism is not either one of MAR or MCAR. It is important to check whether $\mu_1$ is independent from $y_2$, and if this is invalid, the missing mechanism follows MNAR and not ignorable for likelihood-based estimation. In this case, it is a valid assumption as $\mu_1$ is held to be constant.
 
 Therefore, under the assumption made here that $\mu_1$ is independent from $y_2$, the missing data mechanism in this case is MAR and ignorable for likelihood-based estimation.
 
@@ -333,7 +335,7 @@ Firstly, EM algorithm in this case is a valid approach as the missing data mecha
 
 Given that $Y_i$ follows a Bernoulli distribution (with iid), the likelihood of $p_i(\mathbf{\beta})$ can be expressed as,
 
-$$\begin{aligned}L[p_i(\mathbf\beta)] &= \prod_{i=1}^n p_i(\mathbf\beta)^{Y_i} \cdot(1-p_i(\mathbf\beta))^{1-Y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{Y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-Y_i}  \end{aligned}$$ Taking its log, the likelihood function of complete data can be rewritten as,
+$$\begin{aligned}L[p_i(\mathbf\beta)] &= \prod_{i=1}^n p_i(\mathbf\beta)^{y_i} \cdot(1-p_i(\mathbf\beta))^{1-y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-y_i}  \end{aligned}$$ Taking its log, the likelihood function of complete data can be rewritten as,
 
 $$\begin{aligned}log(L[p_i(\mathbf\beta)]) &= \sum_{i=1}^n Y_i \cdot log(p_i(\mathbf\beta)) + (1-Y_i)\cdot log(1-p_i(\mathbf\beta))\\ &= \sum_{i=1}^n Y_i \cdot log\left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right) + (1-Y_i)\cdot log\left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right) 
 \\ &= \sum_{i=1}^n Y_i \cdot (log(exp(\beta_0+\beta_1x_i))- log(1+exp(\beta_0+\beta_1x_i))) + (1-Y_i)\cdot (log(1)-log(1+exp(\beta_0+\beta_1x_i)))
@@ -490,8 +492,7 @@ $$\begin{aligned} \lambda^{t+1} &= argmax_{\mathbf\lambda}\sum_{i=1}^n \tilde{p}
 \\ &= argmax_{\mathbf\lambda}\sum_{i=1}^n \tilde{p}_i^t\cdot (log(\lambda)-(\lambda+1)+log(y))
 \\ \mu^{t+1} &= argmax_{\mathbf\mu}\sum_{i=1}^n (1-\tilde{p}_i^t)\cdot log(\mu y^{-(\mu+1)})
 \\ &= argmax_{\mathbf\mu}\sum_{i=1}^n (1-\tilde{p}_i^t)\cdot (log(\mu)-(\mu+1)+log(y))
-\end{aligned}$$
-and continued until some convergence is reached.
+\end{aligned}$$ and continued until some convergence is reached.
 
 \
 
