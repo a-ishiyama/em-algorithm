@@ -176,7 +176,7 @@ $$\hat{p}_{MLE} \sim N(p, \frac{p(1-p)}{n})$$
 
 and the the 95% confidence interval for $\hat{p}_{MLE}$ as,
 
-$$\theta \pm 1.96\sqrt{\frac{p(1-p)}{n}}$$
+$$p \pm 1.96\sqrt{\frac{p(1-p)}{n}}$$
 
 \
 \
@@ -286,7 +286,7 @@ It is because the missing data mechanism is said to follow the Missing Not at Ra
 
 Contrary to Q3a, in the above equation, the missingness now depends on unobserved value $y_2$ and a set of distinct missingness parameters $\psi$. Writing in mathematical form,
 
-$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_2,\psi)\} =\psi_0+\psi_1y_1$$ which follows the mathematical definition of MNAR,
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_2,\psi)\} =\psi_0+\psi_1y_2$$ which follows the mathematical definition of MNAR,
 
 $$ f(r|\textbf y, \varphi) = f(r|y_{obs},y_{miss,}\varphi), \quad \forall \space\varphi $$
 
@@ -310,11 +310,11 @@ In the above equation, the missingness depends on observed value $y_1$, data mod
 
 Writing in mathematical form,
 
-$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\theta,\psi)\} =\psi_0+\psi_1y_1$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
+$$logit\{Pr(R=0|y_1,y_2,\theta,\psi)\} = logit\{Pr(R=0|y_1,\theta,\psi)\} =0.5\cdot(\mu_1+\psi y_1)$$ which follows the mathematical definition of MAR, $$ f(r|\textbf y, \varphi) = f(r|y_{obs},\varphi), \quad \forall \space y_{miss},\varphi $$
 
 The missingness in the question satisfies one of the ignorability condition that the missingness mechanism parameter $\psi$ is distinct from the data model parameters $\theta$.
 
-All of the derivation above to justify the mechanism to be MAR is conditioned on an assumption that $\mu_1$ independent from unobserved $y_2$. If this assumption is violated, the missingness will become dependent on unobserved and violates the ignorability condition that the mechanism is not either one of MAR or MCAR. It is important to check whether $\mu_1$ is independent from $y_2$, and if this is invalid, the missing mechanism follows MNAR and not ignorable for likelihood-based estimation.
+All of the derivation above to justify the mechanism to be MAR is conditioned on an assumption that $\mu_1$ independent from unobserved $y_2$. If this assumption is violated, the missingness will become dependent on unobserved and violates the ignorability condition that the mechanism is not either one of MAR or MCAR. It is important to check whether $\mu_1$ is independent from $y_2$, and if this is invalid, the missing mechanism follows MNAR and not ignorable for likelihood-based estimation. In this case, it is a valid assumption as $\mu_1$ is held to be constant. 
 
 Therefore, under the assumption made here that $\mu_1$ is independent from $y_2$, the missing data mechanism in this case is MAR and ignorable for likelihood-based estimation.
 
