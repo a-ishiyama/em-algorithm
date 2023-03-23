@@ -335,29 +335,29 @@ Firstly, EM algorithm in this case is a valid approach as the missing data mecha
 
 Given that $Y_i$ follows a Bernoulli distribution (with iid), the likelihood of $p_i(\mathbf{\beta})$ can be expressed as,
 
-$$\begin{aligned}L[p_i(\mathbf\beta)] &= \prod_{i=1}^n p_i(\mathbf\beta)^{y_i} \cdot(1-p_i(\mathbf\beta))^{1-y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-y_i}  \end{aligned}$$ Taking its log, the likelihood function of complete data can be rewritten as,
+$$\begin{aligned}L(p_i(\mathbf\beta)) &= \prod_{i=1}^n p_i(\mathbf\beta)^{y_i} \cdot(1-p_i(\mathbf\beta))^{1-y_i}\\ &=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{y_i} \cdot \left(1-\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-y_i} \\&=\prod_{i=1}^n \left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right)^{y_i} \cdot \left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right)^{1-y_i}  \end{aligned}$$ Taking its log, the likelihood function of complete data can be rewritten as,
 
-$$\begin{aligned}log(L[p_i(\mathbf\beta)]) &= \sum_{i=1}^n Y_i \cdot log(p_i(\mathbf\beta)) + (1-Y_i)\cdot log(1-p_i(\mathbf\beta))\\ &= \sum_{i=1}^n Y_i \cdot log\left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right) + (1-Y_i)\cdot log\left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right) 
-\\ &= \sum_{i=1}^n Y_i \cdot (log(exp(\beta_0+\beta_1x_i))- log(1+exp(\beta_0+\beta_1x_i))) + (1-Y_i)\cdot (log(1)-log(1+exp(\beta_0+\beta_1x_i)))
-\\&= \sum_{i=1}^n Y_i \cdot (\beta_0+\beta_1x_i)-Y_i \cdot log(1+exp(\beta_0+\beta_1x_i)) - log(1+exp(\beta_0+\beta_1x_i)) + Y_i \cdot log(1+exp(\beta_0+\beta_1x_i))
-\\ & = \sum_{i=1}^n Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))
+$$\begin{aligned}log(L(p_i(\mathbf\beta))) &= \sum_{i=1}^n y_i \cdot log(p_i(\mathbf\beta)) + (1-y_i)\cdot log(1-p_i(\mathbf\beta))\\ &= \sum_{i=1}^n y_i \cdot log\left(\frac{exp(\beta_0+\beta_1x_i)}{1+exp(\beta_0+\beta_1x_i)}\right) + (1-y_i)\cdot log\left(\frac{1}{1+exp(\beta_0+\beta_1x_i)}\right) 
+\\ &= \sum_{i=1}^n y_i \cdot (log(exp(\beta_0+\beta_1x_i))- log(1+exp(\beta_0+\beta_1x_i))) + (1-y_i)\cdot (log(1)-log(1+exp(\beta_0+\beta_1x_i)))
+\\&= \sum_{i=1}^n y_i \cdot (\beta_0+\beta_1x_i)-y_i \cdot log(1+exp(\beta_0+\beta_1x_i)) - log(1+exp(\beta_0+\beta_1x_i)) + y_i \cdot log(1+exp(\beta_0+\beta_1x_i))
+\\ & = \sum_{i=1}^n y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))
 \end{aligned}$$
 
 Assume that the first $i = 1,...,m$ values of $Y$ are observed and the remaining $i = m+1,...n$ are missing.
 
 Then, the log likelihood can be expressed as,
 
-$$log(L[p_i(\mathbf\beta)]) = \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))$$
+$$log(L(p_i(\mathbf\beta))) = \sum_{i=1}^m y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))$$
 
 At iteration $(t+1)$ of the algorithm, the E-step calculates the conditional expectation, with respect to the missing observations, of the complete data log-likelihood given the observed data and the estimate of $\mathbf\beta$ from iteration $t$, $\mathbf\beta^t$,
 
-$$Q(\mathbf\beta|\mathbf\beta^t) = E_{Y_{miss}}[log (L[p_i(\mathbf\beta)|\mathbf y_{obs},\mathbf y_{miss}])|\mathbf y_{obs},\mathbf\beta^t]$$
+$$Q(\mathbf\beta|\mathbf\beta^t) = E_{Y_{miss}}[log (L(p_i(\mathbf\beta)|\mathbf y_{obs},\mathbf y_{miss}))|\mathbf y_{obs},\mathbf\beta^t]$$
 
 In this case, conditional expectation becomes,
 
-$$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= E_{Y_{miss}}[\sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))] 
-\\ & = \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n E_{Y_{miss}}[Y_i \cdot (\beta_0+\beta_1x_i)] - log(1+exp(\beta_0+\beta_1x_i))
-\\ &= \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n E_{Y_{miss}}[Y_i \cdot (\beta_0+\beta_1x_i)] -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
+$$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= E_{Y_{miss}}[\sum_{i=1}^m y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i))] 
+\\ & = \sum_{i=1}^m y_i \cdot (\beta_0+\beta_1x_i) - log(1+exp(\beta_0+\beta_1x_i)) + \sum_{i=m+1}^n E_{Y_{miss}}[y_i \cdot (\beta_0+\beta_1x_i)] - log(1+exp(\beta_0+\beta_1x_i))
+\\ &= \sum_{i=1}^m y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n E_{Y_{miss}}[y_i \cdot (\beta_0+\beta_1x_i)] -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
 \end{aligned}$$
 
 Given that for a random variable $X$ which follows a Bernoulli distribution,
@@ -366,8 +366,8 @@ $$P(X = x) = p^x\cdot (1-p)^{1-x}$$ The expectation is, $$E[X] = p$$
 
 The above conditional expectation can be completed as,
 
-$$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n E_{Y_{miss}}[Y_i] \cdot (\beta_0+\beta_1x_i) -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
-\\&= \sum_{i=1}^m Y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n \left(\frac{exp(\beta_0^t+\beta_1^tx_i)}{1+exp(\beta^t_0+\beta^t_1x_i)}\right)\cdot (\beta_0+\beta_1x_i) -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
+$$\begin{aligned}Q(\mathbf\beta|\mathbf\beta^t) &= \sum_{i=1}^m y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n E_{Y_{miss}}[y_i] \cdot (\beta_0+\beta_1x_i) -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
+\\&= \sum_{i=1}^m y_i \cdot (\beta_0+\beta_1x_i) + \sum_{i=m+1}^n \left(\frac{exp(\beta_0^t+\beta_1^tx_i)}{1+exp(\beta^t_0+\beta^t_1x_i)}\right)\cdot (\beta_0+\beta_1x_i) -  \sum_{i=1}^nlog(1+exp(\beta_0+\beta_1x_i))
 \end{aligned}$$
 
 Following the derivation of the E-step as above, the M-step can be computed as,
