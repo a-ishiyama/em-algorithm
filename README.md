@@ -1,4 +1,4 @@
-# On maximum likelihood, missing data mechanism, and the EM algorithm.
+# Derivation and computation of the EM algorithm
 Author: Akira Ishiyama
 
 This is a repo for the individual project of the module 'Incomplete data analysis".
